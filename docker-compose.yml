@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.2
+    container_name: ns_prueba2_db
+    restart: always
+    environment:
+      POSTGRES_DB: ns_prueba2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5434:5432"  # Puerto local opcional para pruebas externas
+    volumes:
+      - ns_prueba2_postgres_data:/var/lib/postgresql/data
+    networks:
+      - ns_prueba2_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ns_prueba2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ns_prueba2_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5052:80"  # Cambié puerto para no interferir con otros pgAdmin
+    volumes:
+      - ns_prueba2_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - ns_prueba2_network
+    depends_on:
+      - postgres
+
+  nestjs:
+    build: .
+    container_name: ns_prueba2_app
+    restart: always
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: ns_prueba2
+    ports:
+      - "3002:3000"  # Exponemos 3002 localmente, app sigue corriendo en 3000 dentro del contenedor
+    networks:
+      - ns_prueba2_network
+    depends_on:
+      - postgres
+
+volumes:
+  ns_prueba2_postgres_data:
+    driver: local
+  ns_prueba2_pgadmin_data:
+    driver: local
+
+networks:
+  ns_prueba2_network:
+    driver: bridge
