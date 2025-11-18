@@ -36,6 +36,11 @@ Para manejar variables de entorno en Docker:
 npm install dotenv
 ```
 
+Para manejar JWT
+npm install @nestjs/jwt @nestjs/passport passport passport-local passport-jwt bcrypt
+npm install --save-dev @types/passport-jwt @types/bcrypt
+npm install @nestjs/config
+
 ## Levantar el proyecto
 
 Con Docker y NestJS en modo desarrollo:
@@ -66,6 +71,7 @@ Formularios
 | DELETE | `/users/id` | Eliminar usuarios por ID     |
 | PATCH  | `/users/id` | Actualizar usuarios por ID   |
 (no incluye modificaciones anidadas)
+Puerto de trabajo: 3001
 ```
 
 
@@ -84,6 +90,23 @@ Formularios
   "email": "usuario2@example.com",
   "password": "987654",
   "role": "user"
+}
+```
+
+## JSON DE PRUEBA PARA OBTENER JWT
+
+Ingrese a
+
+```bash
+http://localhost:3001/auth/login
+```
+
+con el siguiente Body de ejemplo
+
+```bash
+{
+  "email": "usuario3@example.com",
+  "password": "987654"
 }
 ```
 

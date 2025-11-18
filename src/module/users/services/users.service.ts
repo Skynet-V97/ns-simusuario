@@ -13,6 +13,10 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { password, ...rest } = createUserDto;
     const passwordHash = await bcrypt.hash(password, 10);
